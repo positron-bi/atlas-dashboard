@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#142d4d">
   <meta name="description" content="داشبورد اطلس؛ سود و زیان ماهانه و مقایسهٔ بودجه با عملکرد">
   <title>داشبورد مالی اطلس</title>
-  <link rel="stylesheet" href="styles.css?v=atlas-20261017b">
+  <link rel="stylesheet" href="styles.css?v=atlas-20261018a">
 </head>
 <body>
   <header class="app-header"><div class="header-inner">
@@ -15,13 +15,14 @@
   </div></header>
   <div class="report-shell">
     <nav class="report-nav" aria-label="صفحات گزارش">
-      <button class="nav-item active" type="button" data-view="pnl" data-title="سود و زیان" aria-current="page">سود و زیان</button>
+      <button class="nav-item active" type="button" data-view="overview" data-title="نمای کلی مالی" aria-current="page">نمای کلی</button>
+      <button class="nav-item" type="button" data-view="pnl" data-title="سود و زیان">سود و زیان</button>
       <button class="nav-item" type="button" data-view="budget" data-title="بودجه و عملکرد">بودجه و عملکرد</button>
     </nav>
     <main>
       <div class="report-toolbar">
-        <div class="report-heading"><div class="section-overline">گزارش مدیریتی / <span id="section-path">سود و زیان</span></div>
-          <h1 id="page-title">سود و زیان</h1><p>مبالغ به میلیارد تومان · داده‌ها در سطح ماه تجمیع شده‌اند</p></div>
+        <div class="report-heading"><div class="section-overline">گزارش مدیریتی / <span id="section-path">نمای کلی</span></div>
+          <h1 id="page-title">نمای کلی مالی</h1><p>مبالغ به میلیارد تومان · داده‌ها در سطح ماه تجمیع شده‌اند</p></div>
         <div class="filters">
           <div class="filter-panel"><label for="year-select">سال مالی</label><select id="year-select" aria-label="انتخاب سال مالی"></select></div>
           <div class="filter-panel"><label for="month-select">ماه</label><select id="month-select" aria-label="انتخاب ماه"></select></div>
@@ -29,7 +30,21 @@
       </div>
       <div class="status-strip"><span class="status-dot"></span><span id="freshness">در حال بارگذاری…</span><span class="status-spacer"></span><span class="unit-label">منبع: تجمیع مدل Power BI · بدون ریز اسناد</span></div>
 
-      <section id="pnl" class="view active" aria-label="سود و زیان">
+      <section id="overview" class="view active" aria-label="نمای کلی">
+        <div class="section-heading"><h2>تصویر مالی</h2><span id="overview-period">خلاصهٔ عملکرد در دورهٔ انتخابی</span></div>
+        <section class="kpi-grid four" aria-label="شاخص‌های کلیدی">
+          <article class="kpi-card blue"><span class="kpi-label">درآمد صورت سود و زیان</span><div class="kpi-value" id="overview-revenue">—</div><span class="kpi-foot">میلیارد تومان · مطابق صفحهٔ سود و زیان</span></article>
+          <article class="kpi-card teal"><span class="kpi-label">سود / زیان صورت سود و زیان</span><div class="kpi-value" id="overview-profit">—</div><span class="kpi-foot">درآمد به‌علاوهٔ هزینهٔ علامت‌دار</span></article>
+          <article class="kpi-card indigo"><span class="kpi-label">تحقق درآمد بودجه</span><div class="kpi-value" id="overview-revenue-achievement">—</div><span class="kpi-foot">عملکرد تقسیم بر بودجه</span></article>
+          <article class="kpi-card amber"><span class="kpi-label">انحراف سود از بودجه</span><div class="kpi-value" id="overview-profit-variance">—</div><span class="kpi-foot">میلیارد تومان · مطابق صفحهٔ بودجه و عملکرد</span></article>
+        </section>
+        <div class="panel-grid overview-grid">
+          <section class="visual-panel"><div class="panel-heading"><div><h2>روند ماهانهٔ سود و زیان</h2><p>درآمد، هزینه و سود / زیان در سال انتخابی</p></div><div class="legend"><span><i class="key blue-key"></i>درآمد</span><span><i class="key amber-key"></i>هزینه</span><span><i class="key teal-key"></i>سود / زیان</span></div></div><div id="overview-pnl-chart" class="chart" role="img" aria-label="نمای کلی روند ماهانه سود و زیان"></div></section>
+          <section class="visual-panel"><div class="panel-heading"><div><h2>درآمد بودجه در برابر عملکرد</h2><p>مقایسهٔ ماهانه · میلیارد تومان</p></div><div class="legend"><span><i class="key slate-key"></i>بودجه</span><span><i class="key blue-key"></i>عملکرد</span></div></div><div id="overview-budget-chart" class="chart" role="img" aria-label="نمای کلی مقایسه بودجه و عملکرد درآمد"></div></section>
+        </div>
+      </section>
+
+      <section id="pnl" class="view" aria-label="سود و زیان">
         <div class="section-heading"><h2>عملکرد صورت سود و زیان</h2><span id="pnl-period">عملکرد ماهانه در سال انتخابی</span></div>
         <section class="kpi-grid three">
           <article class="kpi-card blue"><span class="kpi-label">درآمد</span><div class="kpi-value" id="pnl-revenue">—</div><span class="kpi-foot">میلیارد تومان</span></article>
@@ -60,6 +75,6 @@
     </main>
     <footer>اطلس · دادهٔ منتشرشده فقط شامل جمع‌های ماهانه است. صفحهٔ Accounting و ریز اسناد از این نسخه حذف شده‌اند.</footer>
   </div>
-  <script src="app.js?v=atlas-20261017b"></script>
+  <script src="app.js?v=atlas-20261018a"></script>
 </body>
 </html>

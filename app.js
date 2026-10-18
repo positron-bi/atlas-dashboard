@@ -62,6 +62,38 @@ function renderPnl() {
   get('pnl-monthly').innerHTML = tableRows.map(row => `<tr><td>${monthName(row.month)}</td>${amountCell(row.revenue)}${amountCell(-row.expenses)}${amountCell(row.revenue+row.expenses)}</tr>`).join('') || '<tr><td colspan="4" class="empty-note">داده‌ای موجود نیست.</td></tr>';
 }
 
+function renderOverview() {
+  const yearlyPnl = data.pnl.filter(row => row.year === selectedYear);
+  const latestPnlMonth = Math.max(0, ...yearlyPnl.map(row => row.month));
+  const cutoff = selectedMonth === 'all' ? latestPnlMonth : Number(selectedMonth);
+  const pnlRows = selectedMonth === 'all' ? yearlyPnl.filter(row => row.month <= cutoff) : yearlyPnl.filter(row => row.month === Number(selectedMonth));
+  const revenue = sum(pnlRows, 'revenue');
+  const profit = sum(pnlRows, 'revenue') + sum(pnlRows, 'expenses');
+  get('overview-revenue').textContent = money(revenue);
+  get('overview-profit').textContent = money(profit);
+  get('overview-period').textContent = selectedMonth === 'all' ? `عملکرد تجمعی تا ${monthName(cutoff)}` : `عملکرد ${monthName(selectedMonth)}`;
+
+  const allBudget = data.budget.filter(row => row.year === selectedYear);
+  const actualMonths = allBudget.filter(row => row.actualRevenue != null);
+  const budgetCutoff = selectedMonth === 'all' ? Math.max(0, ...actualMonths.map(row => row.month)) : Number(selectedMonth);
+  const budgetRows = selectedMonth === 'all' ? allBudget.filter(row => row.month <= budgetCutoff) : allBudget.filter(row => row.month === Number(selectedMonth));
+  const budgetRevenue = sum(budgetRows, 'revenue');
+  const budgetProfit = sum(budgetRows, 'revenue') + sum(budgetRows, 'expenses');
+  const actualRevenue = budgetRows.some(row => row.actualRevenue != null) ? sum(budgetRows, 'actualRevenue') : null;
+  const actualProfit = actualRevenue == null ? null : actualRevenue + sum(budgetRows, 'actualExpenses');
+  get('overview-revenue-achievement').textContent = pct(actualRevenue == null || !budgetRevenue ? null : actualRevenue / budgetRevenue);
+  get('overview-profit-variance').textContent = money(actualProfit == null ? null : actualProfit - budgetProfit);
+
+  const chartRows = selectedMonth === 'all' ? yearlyPnl : yearlyPnl.filter(row => row.month === Number(selectedMonth));
+  groupedBars('overview-pnl-chart', chartRows.map(row => ({month:row.month,revenue:row.revenue/1e10,expenses:-row.expenses/1e10,profit:(row.revenue+row.expenses)/1e10})), [
+    {key:'revenue',label:'درآمد',color:colors[0]}, {key:'expenses',label:'هزینه',color:colors[1]}, {key:'profit',label:'سود / زیان',color:colors[2]}
+  ]);
+  const budgetChartRows = selectedMonth === 'all' ? allBudget : allBudget.filter(row => row.month === Number(selectedMonth));
+  groupedBars('overview-budget-chart', budgetChartRows.map(row => ({month:row.month,plan:row.revenue/1e10,actual:row.actualRevenue == null ? null : row.actualRevenue/1e10})), [
+    {key:'plan',label:'بودجه',color:'#b7c4d3'}, {key:'actual',label:'عملکرد',color:colors[0]}
+  ], true);
+}
+
 function renderBudget() {
   const all = data.budget.filter(row => row.year === selectedYear);
   const cut = currentCutoff(all.filter(row => row.actualRevenue !== null));
@@ -99,7 +131,7 @@ function renderBudget() {
 }
 
 function render() {
-  renderPnl(); renderBudget();
+  renderOverview(); renderPnl(); renderBudget();
   const cutoff = selectedMonth === 'all' ? 'همهٔ ماه‌ها' : monthName(Number(selectedMonth));
   get('header-period').textContent = `سال مالی ${fa.format(selectedYear)} · ${cutoff}`;
   const latest = data.pnl.reduce((last, row) => !last || row.year > last.year || (row.year === last.year && row.month > last.month) ? row : last, null);
