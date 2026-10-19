@@ -1,4 +1,5 @@
 const fa = new Intl.NumberFormat('fa-IR', { maximumFractionDigits: 2 });
+const faYear = new Intl.NumberFormat('fa-IR', { useGrouping: false, maximumFractionDigits: 0 });
 const money = n => n == null ? '—' : fa.format(n / 1e10);
 const pct = n => n == null || !Number.isFinite(n) ? '—' : `${fa.format(n * 100)}٪`;
 const get = (id) => document.getElementById(id);
@@ -107,7 +108,7 @@ function renderBudget() {
   get('budget-actual-profit').textContent = money(profitActual);
   get('profit-variance').textContent = money(profitActual == null ? null : profitActual-profitPlan);
   get('budget-period').textContent = !all.length
-    ? `اطلاعات بودجه برای سال ${fa.format(selectedYear)} در مدل موجود نیست`
+    ? `اطلاعات بودجه برای سال ${faYear.format(selectedYear)} در مدل موجود نیست`
     : selectedMonth === 'all' ? `بودجه و عملکرد تا ${monthName(cut || 12)}` : `مقایسهٔ ${monthName(selectedMonth)}`;
   const chartRows = selectedMonth === 'all' ? all : all.filter(row => row.month === Number(selectedMonth));
   const chart = (key, expense=false, profit=false) => chartRows.map(row => {
@@ -133,14 +134,14 @@ function renderBudget() {
 function render() {
   renderOverview(); renderPnl(); renderBudget();
   const cutoff = selectedMonth === 'all' ? 'همهٔ ماه‌ها' : monthName(Number(selectedMonth));
-  get('header-period').textContent = `سال مالی ${fa.format(selectedYear)} · ${cutoff}`;
+  get('header-period').textContent = `سال مالی ${faYear.format(selectedYear)} · ${cutoff}`;
   const extracted = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZone:'Asia/Tehran'}).format(new Date(data.extractedAt));
   get('freshness').textContent = `آخرین به‌روزرسانی داده‌ها: ${extracted}`;
 }
 
 function setup() {
   const yearSelect=get('year-select');
-  [...data.years].sort((a,b)=>b-a).forEach(year=>yearSelect.add(new Option(fa.format(year),String(year))));
+  [...data.years].sort((a,b)=>b-a).forEach(year=>yearSelect.add(new Option(faYear.format(year),String(year))));
   yearSelect.value='1405';
   const monthSelect=get('month-select');
   monthSelect.add(new Option('همه ماه‌ها','all'));
