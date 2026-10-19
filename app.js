@@ -134,11 +134,8 @@ function render() {
   renderOverview(); renderPnl(); renderBudget();
   const cutoff = selectedMonth === 'all' ? 'همهٔ ماه‌ها' : monthName(Number(selectedMonth));
   get('header-period').textContent = `سال مالی ${fa.format(selectedYear)} · ${cutoff}`;
-  const latest = data.pnl.reduce((last, row) => !last || row.year > last.year || (row.year === last.year && row.month > last.month) ? row : last, null);
-  const extracted = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {year:'numeric',month:'numeric',day:'numeric',timeZone:'Asia/Tehran'}).format(new Date(data.extractedAt));
-  get('freshness').textContent = latest
-    ? `آخرین عملکرد مدل: ${fa.format(latest.year)} / ${monthName(latest.month)} · استخراج ${extracted}`
-    : `داده‌ای در مدل موجود نیست · استخراج ${extracted}`;
+  const extracted = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZone:'Asia/Tehran'}).format(new Date(data.extractedAt));
+  get('freshness').textContent = `آخرین به‌روزرسانی داده‌ها: ${extracted}`;
 }
 
 function setup() {
